@@ -1,7 +1,12 @@
 const { Router } = require('express')
 
-const routes = Router()
+const userController = require('../controller/userController')
 
-routes.get('/',(req,res)=>{return console.log('Acessando rota get')})
+const router = Router()
 
-module.exports
+router.post('/user', userController.createUser)
+router.put('/user/:id', userController.updateUser)
+router.get('/user', userController.listUsers)
+router.delete('/user/:id', userController.deleteUser)
+
+module.exports = router
