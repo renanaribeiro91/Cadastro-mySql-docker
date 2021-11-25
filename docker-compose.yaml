@@ -6,19 +6,50 @@ services:
       dockerfile: dockerfile
     ports:
       - "3000:3000"
+    environment:
+      - MYSQL_USER=wogel
+      - MYSQL_PASSWORD=test
+      - MYSQL_DATABASE=docker
+      - MYSQL_HOST=192.168.0.1
+      - PORT= 3000
     volumes:
       - "./usr/src/app"
     depends_on:
       - db
+    networks:
+      app_net:
+        ipv4_address: 192.168.0.2
       
   db:
     container_name: mySQL_db
     image: mysql:5.7.31
-    command: --default-authentication-plugin=mysql_native_password
     restart: always
-    environment: 
+    environment:
+      - MYSQL_USER=renan
+      - MYSQL_DATABASE=docker
+      - MYSQL_PASSWORD=test
       - MYSQL_ROOT_PASSWORD=root
       - TZ=America/Sao_Paulo
     ports:
       - "3306:3306"
-    
+    networks:
+      app_net:
+        ipv4_address: 192.168.0.3
+
+  adminer:
+    image: adminer:4
+    container_name: adminer_container
+    restart: always
+    ports: 
+      - 8080:8080
+    networks:
+      app_net:
+        ipv4_address: 192.168.0.4
+
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.0.0/24"
+          gateway: 192.168.0.1

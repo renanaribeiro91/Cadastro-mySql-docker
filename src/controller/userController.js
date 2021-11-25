@@ -12,7 +12,7 @@ module.exports = {
         res.status(200).json({ user })
       }
     } catch (error) {
-      res.status(400).json({ error })
+      res.status(400).send(error)
     }
   },
   async updateUser(req, res) {
@@ -26,6 +26,31 @@ module.exports = {
         const user = await User.update({ name, email }, { where: { id } })
         res.status(200).json({ user })
       }
+    } catch (error) {
+      res.status(400).json({ error })
+    }
+  },
+  async updatePatchUser(req, res) {
+    try {
+      const { id } = req.params
+      const body = req.body
+      const user = await User.findOne({ where: { id } })
+      if (!user) {
+        res.status(401).json({ message: "Nenhum usuario encontrado" })
+      } else {
+        await User.update({ ...body }, { where: { id } })
+        res.status(200).send('Usuário Atualizado com sucesso')
+      }
+    } catch (error) {
+      res.status(400).json({ error })
+    }
+  },
+  async getUserById(req, res) {
+    try {
+      const { id } = req.params
+      const user = await User.findOne({ where: { id } })
+      if (!user) res.status(401).json({ message: "Nenhum usuario encontrado" })
+      res.status(200).json({user})
     } catch (error) {
       res.status(400).json({ error })
     }
